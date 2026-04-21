@@ -1,0 +1,31 @@
+# Built artifacts
+*.iml
+.gradle
+/build
+/captures
+.externalNativeBuild
+.cxx
+
+# Local configuration files (contains SDK paths, etc.)
+local.properties
+
+# Log files
+*.log
+
+# IDE files
+.idea/libraries
+.idea/modules.xml
+.idea/workspace.xml
+.idea/navEditor.xml
+.idea/assetWizardSettings.xml
+.idea/caches
+.idea/shelf
+.idea/gradle.xml
+.idea/deploymentTargetSelector.xml
+
+# OS generated files
+.DS_Store
+Thumbs.db
+
+# Kotlin
+.kotlin/
