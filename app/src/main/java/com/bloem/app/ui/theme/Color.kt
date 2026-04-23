@@ -2,6 +2,12 @@ package com.bloem.app.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
+val Soot = Color(0xFF2D3536)
+val Moss = Color(0xFF566B5F)
+val Eucalyptus = Color(0xFF98AA9D)
+val Plaster = Color(0xFFF6F4ED)
+val Mist = Color(0xFFB3C9D6)
+
 val Purple80 = Color(0xFFD0BCFF)
 val PurpleGrey80 = Color(0xFFCCC2DC)
 val Pink80 = Color(0xFFEFB8C8)

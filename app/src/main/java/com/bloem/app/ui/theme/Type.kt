@@ -2,33 +2,34 @@ package com.bloem.app.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import com.bloem.app.R
 
-// Set of Material typography styles to start with
+// Define Sansita font family with lowercase resource names
+val Sansita = FontFamily(
+    Font(R.font.sansita_regular, FontWeight.Normal),
+    Font(R.font.sansita_bold, FontWeight.Bold)
+)
+
 val Typography = Typography(
+    displayLarge = TextStyle(
+        fontFamily = Sansita,
+        fontWeight = FontWeight.Bold,
+        fontSize = 64.sp
+    ),
     bodyLarge = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 22.sp,
+        fontSize = 18.sp,
         lineHeight = 28.sp,
-        letterSpacing = 0.sp
+        letterSpacing = 0.5.sp
     ),
-    labelSmall = TextStyle(
+    titleMedium = TextStyle(
         fontFamily = FontFamily.Default,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        fontSize = 20.sp
     )
-    */
 )
