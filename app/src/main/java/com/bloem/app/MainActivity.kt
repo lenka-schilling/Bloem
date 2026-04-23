@@ -11,9 +11,11 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.*
@@ -37,6 +39,8 @@ import com.bloem.app.ui.theme.BloemTheme
 import com.bloem.app.ui.theme.Soot
 import com.bloem.app.ui.theme.Plaster
 import com.bloem.app.ui.theme.Moss
+import com.bloem.app.ui.theme.Mist
+import com.bloem.app.ui.theme.Eucalyptus
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -47,10 +51,16 @@ class MainActivity : ComponentActivity() {
                 val navController = rememberNavController()
                 NavHost(navController = navController, startDestination = "home") {
                     composable("home") {
-                        HomeScreen(onBookSession = { navController.navigate("booking") })
+                        HomeScreen(
+                            onBookSession = { navController.navigate("booking") },
+                            onControlSession = { navController.navigate("control_session") }
+                        )
                     }
                     composable("booking") {
                         BookingScreen(onBack = { navController.popBackStack() })
+                    }
+                    composable("control_session") {
+                        ControlSessionScreen(onBack = { navController.popBackStack() })
                     }
                 }
             }
@@ -59,7 +69,7 @@ class MainActivity : ComponentActivity() {
 }
 
 @Composable
-fun HomeScreen(onBookSession: () -> Unit) {
+fun HomeScreen(onBookSession: () -> Unit, onControlSession: () -> Unit) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
         containerColor = MaterialTheme.colorScheme.background
@@ -117,7 +127,7 @@ fun HomeScreen(onBookSession: () -> Unit) {
                     Text(text = "Book a Session", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 }
                 Button(
-                    onClick = { /* TODO */ },
+                    onClick = onControlSession,
                     modifier = Modifier.height(80.dp).weight(1f),
                     shape = RoundedCornerShape(20.dp),
                     colors = ButtonDefaults.buttonColors(
@@ -125,10 +135,214 @@ fun HomeScreen(onBookSession: () -> Unit) {
                         contentColor = MaterialTheme.colorScheme.primary
                     )
                 ) {
-                    Text(text = "Sessions", fontSize = 24.sp, fontWeight = FontWeight.Bold)
+                    Text(text = "Control your Session", fontSize = 24.sp, fontWeight = FontWeight.Bold)
                 }
             }
         }
+    }
+}
+
+@Composable
+fun ControlSessionScreen(onBack: () -> Unit) {
+    var lightsOn by remember { mutableStateOf(true) }
+    var soundOn by remember { mutableStateOf(true) }
+    var brightness by remember { mutableFloatStateOf(0.6f) }
+    var selectedMood by remember { mutableStateOf("Calm") }
+    var selectedSoundType by remember { mutableStateOf("Sounds") }
+
+    Scaffold(
+        modifier = Modifier.fillMaxSize(),
+        containerColor = Plaster
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .padding(innerPadding)
+                .fillMaxSize()
+                .padding(40.dp)
+        ) {
+            // Header
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                IconButton(onClick = onBack) {
+                    Icon(Icons.Default.ArrowBack, contentDescription = "Back", tint = Soot)
+                }
+                Spacer(modifier = Modifier.width(16.dp))
+                Column(horizontalAlignment = Alignment.CenterHorizontally, modifier = Modifier.weight(1f)) {
+                    Text("Your Environment", style = MaterialTheme.typography.headlineMedium, fontWeight = FontWeight.Bold, color = Soot)
+                    Text("Tailor the space to how you feel.", color = Color.Gray, fontSize = 16.sp)
+                }
+                Spacer(modifier = Modifier.width(48.dp))
+            }
+
+            Spacer(modifier = Modifier.height(32.dp))
+
+            LazyColumn(modifier = Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(32.dp)) {
+                // Lights Section
+                item {
+                    Column {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text("Lights", fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Soot)
+                            Switch(checked = lightsOn, onCheckedChange = { lightsOn = it }, colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = Moss))
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Text("Mood", color = Soot, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+                            MoodCard("Calm", Icons.Default.WbSunny, selectedMood == "Calm") { selectedMood = "Calm" }
+                            MoodCard("Focus", Icons.Default.FilterTiltShift, selectedMood == "Focus") { selectedMood = "Focus" }
+                            MoodCard("Energy", Icons.Default.WbSunny, selectedMood == "Energy") { selectedMood = "Energy" }
+                            MoodCard("Custom", Icons.Default.AutoAwesome, selectedMood == "Custom") { selectedMood = "Custom" }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text("Brightness", color = Soot, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                        Row(verticalAlignment = Alignment.CenterVertically) {
+                            Icon(Icons.Default.WbSunny, contentDescription = null, tint = Soot, modifier = Modifier.size(20.dp))
+                            Slider(
+                                value = brightness,
+                                onValueChange = { brightness = it },
+                                modifier = Modifier.weight(1f).padding(horizontal = 16.dp),
+                                colors = SliderDefaults.colors(thumbColor = Soot, activeTrackColor = Soot)
+                            )
+                            Icon(Icons.Default.WbSunny, contentDescription = null, tint = Soot, modifier = Modifier.size(28.dp))
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        Text("Color", color = Soot, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
+                            ColorOption(Soot)
+                            ColorOption(Moss)
+                            ColorOption(Eucalyptus)
+                            ColorOption(Color.White, true)
+                            ColorOption(Mist)
+                            ColorOption(Color(0xFFB39DDB)) // Light Purple
+                            ColorOption(Color(0xFFEF9A9A)) // Light Red
+                        }
+                    }
+                }
+
+                // Sound Section
+                item {
+                    Column {
+                        HorizontalDivider(modifier = Modifier.padding(vertical = 8.dp), thickness = 1.dp, color = Color.LightGray.copy(alpha = 0.5f))
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.SpaceBetween, verticalAlignment = Alignment.CenterVertically) {
+                            Text("Sound", fontWeight = FontWeight.Bold, fontSize = 24.sp, color = Soot)
+                            Switch(checked = soundOn, onCheckedChange = { soundOn = it }, colors = SwitchDefaults.colors(checkedThumbColor = Color.White, checkedTrackColor = Moss))
+                        }
+                        
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Row(modifier = Modifier.fillMaxWidth().clip(RoundedCornerShape(12.dp)).background(Color.LightGray.copy(alpha = 0.2f))) {
+                            TabButton("Sounds", selectedSoundType == "Sounds") { selectedSoundType = "Sounds" }
+                            TabButton("Music", selectedSoundType == "Music") { selectedSoundType = "Music" }
+                            TabButton("Silence", selectedSoundType == "Silence") { selectedSoundType = "Silence" }
+                        }
+
+                        Spacer(modifier = Modifier.height(24.dp))
+                        SoundItem("Ocean Waves", "Gentle surf", Icons.Default.Water)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SoundItem("Forest Rain", "Rain in the woods", Icons.Default.Park)
+                        Spacer(modifier = Modifier.height(12.dp))
+                        SoundItem("Soft Wind", "Peaceful breeze", Icons.Default.Air)
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+fun Sidebar(onHomeClick: () -> Unit, currentRoute: String) {
+    Column(
+        modifier = Modifier
+            .width(280.dp)
+            .fillMaxHeight()
+            .padding(vertical = 48.dp, horizontal = 24.dp),
+        verticalArrangement = Arrangement.SpaceBetween
+    ) {
+        Column {
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Image(
+                    painter = painterResource(id = R.drawable.bloem),
+                    contentDescription = "Logo",
+                    modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
+                )
+                Spacer(modifier = Modifier.width(12.dp))
+                Text("Bloem", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
+            }
+            
+            Spacer(modifier = Modifier.height(64.dp))
+            
+            SidebarItem(icon = Icons.Default.Home, label = "Home", isSelected = currentRoute == "home", onClick = onHomeClick)
+            SidebarItem(icon = Icons.Default.DateRange, label = "Book", isSelected = currentRoute == "booking")
+            SidebarItem(icon = Icons.Default.ListAlt, label = "View Sessions", isSelected = currentRoute == "view_sessions")
+        }
+        
+        SidebarItem(icon = Icons.Default.Settings, label = "Settings")
+    }
+}
+
+@Composable
+fun MoodCard(label: String, icon: ImageVector, isSelected: Boolean, onClick: () -> Unit) {
+    Column(
+        modifier = Modifier
+            .size(100.dp)
+            .clip(RoundedCornerShape(16.dp))
+            .background(if (isSelected) Soot else Color.LightGray.copy(alpha = 0.4f))
+            .clickable(onClick = onClick),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Icon(icon, contentDescription = null, tint = if (isSelected) Color.White else Soot, modifier = Modifier.size(32.dp))
+        Spacer(modifier = Modifier.height(8.dp))
+        Text(label, color = if (isSelected) Color.White else Soot, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+fun ColorOption(color: Color, hasBorder: Boolean = false) {
+    Box(
+        modifier = Modifier
+            .size(40.dp)
+            .clip(CircleShape)
+            .background(color)
+            .then(if (hasBorder) Modifier.background(Color.LightGray.copy(alpha = 0.5f)).padding(1.dp).clip(CircleShape).background(color) else Modifier)
+    )
+}
+
+@Composable
+fun RowScope.TabButton(label: String, isSelected: Boolean, onClick: () -> Unit) {
+    Box(
+        modifier = Modifier
+            .weight(1f)
+            .height(48.dp)
+            .clip(RoundedCornerShape(12.dp))
+            .background(if (isSelected) Soot else Color.Transparent)
+            .clickable(onClick = onClick),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(label, color = if (isSelected) Color.White else Soot, fontWeight = FontWeight.Medium)
+    }
+}
+
+@Composable
+fun SoundItem(title: String, subtitle: String, icon: ImageVector) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(Color.LightGray.copy(alpha = 0.3f))
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(icon, contentDescription = null, tint = Soot, modifier = Modifier.size(32.dp))
+        Spacer(modifier = Modifier.width(16.dp))
+        Column(modifier = Modifier.weight(1f)) {
+            Text(title, fontWeight = FontWeight.Bold, color = Soot, fontSize = 18.sp)
+            Text(subtitle, color = Color.Gray, fontSize = 14.sp)
+        }
+        Icon(Icons.Default.PlayCircle, contentDescription = "Play", tint = Moss, modifier = Modifier.size(32.dp))
     }
 }
 
@@ -145,33 +359,7 @@ fun BookingScreen(onBack: () -> Unit) {
             enter = expandHorizontally(),
             exit = shrinkHorizontally()
         ) {
-            Column(
-                modifier = Modifier
-                    .width(280.dp)
-                    .fillMaxHeight()
-                    .padding(vertical = 48.dp, horizontal = 24.dp),
-                verticalArrangement = Arrangement.SpaceBetween
-            ) {
-                Column {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            painter = painterResource(id = R.drawable.bloem),
-                            contentDescription = "Logo",
-                            modifier = Modifier.size(48.dp).clip(RoundedCornerShape(12.dp))
-                        )
-                        Spacer(modifier = Modifier.width(12.dp))
-                        Text("Bloem", color = Color.White, fontSize = 32.sp, fontWeight = FontWeight.Bold)
-                    }
-                    
-                    Spacer(modifier = Modifier.height(64.dp))
-                    
-                    SidebarItem(icon = Icons.Default.Home, label = "Home", onClick = onBack)
-                    SidebarItem(icon = Icons.Default.DateRange, label = "Book", isSelected = true)
-                    SidebarItem(icon = Icons.Default.ListAlt, label = "Sessions")
-                }
-                
-                SidebarItem(icon = Icons.Default.Settings, label = "Settings")
-            }
+            Sidebar(onHomeClick = onBack, currentRoute = "booking")
         }
 
         // Main Content
@@ -209,7 +397,6 @@ fun BookingScreen(onBack: () -> Unit) {
             Text("Select Duration", fontWeight = FontWeight.Bold, fontSize = 20.sp)
             Spacer(modifier = Modifier.height(16.dp))
             Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                // Restricted to 10, 15, or 20 minutes
                 listOf(10, 15, 20).forEach { duration ->
                     DurationCard(
                         duration = duration,
@@ -299,8 +486,8 @@ fun TimeCard(time: String, isSelected: Boolean, onClick: () -> Unit) {
 
 @Preview(showBackground = true, device = "spec:width=1280dp,height=800dp,orientation=landscape")
 @Composable
-fun BookingPreview() {
+fun ControlSessionPreview() {
     BloemTheme {
-        BookingScreen {}
+        ControlSessionScreen {}
     }
 }
