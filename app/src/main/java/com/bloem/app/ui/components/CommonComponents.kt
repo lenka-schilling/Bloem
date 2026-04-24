@@ -143,28 +143,32 @@ fun TimeCard(time: String, isSelected: Boolean, onClick: () -> Unit) {
 fun EnvironmentCard(title: String, description: String, icon: ImageVector, bgColor: Color, modifier: Modifier = Modifier) {
     Box(
         modifier = modifier
-            .height(280.dp)
+            .height(300.dp)
             .clip(RoundedCornerShape(24.dp))
             .background(bgColor)
             .padding(20.dp),
         contentAlignment = Alignment.Center
     ) {
-        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.Center) {
-            Box(modifier = Modifier.size(64.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.1f)), contentAlignment = Alignment.Center) {
-                Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(32.dp))
+        Column(horizontalAlignment = Alignment.CenterHorizontally, verticalArrangement = Arrangement.SpaceBetween, modifier = Modifier.fillMaxHeight()) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Box(modifier = Modifier.size(56.dp).clip(CircleShape).background(Color.White.copy(alpha = 0.15f)), contentAlignment = Alignment.Center) {
+                    Icon(icon, contentDescription = null, tint = Color.White, modifier = Modifier.size(28.dp))
+                }
+                Spacer(modifier = Modifier.height(12.dp))
+                Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
+                Spacer(modifier = Modifier.height(8.dp))
+                Text(description, color = Color.White.copy(alpha = 0.8f), textAlign = TextAlign.Center, fontSize = 13.sp, lineHeight = 18.sp)
             }
-            Spacer(modifier = Modifier.height(16.dp))
-            Text(title, color = Color.White, fontWeight = FontWeight.Bold, fontSize = 22.sp)
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(description, color = Color.White.copy(alpha = 0.8f), textAlign = TextAlign.Center, fontSize = 14.sp)
-            Spacer(modifier = Modifier.height(20.dp))
-            Button(
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(containerColor = Color.White, contentColor = Soot),
-                shape = RoundedCornerShape(12.dp),
-                modifier = Modifier.height(40.dp)
+            
+            Surface(
+                onClick = { /* TODO: Trigger Preview */ },
+                shape = CircleShape,
+                color = Color.White,
+                modifier = Modifier.width(100.dp).height(32.dp)
             ) {
-                Text("View details", fontSize = 12.sp)
+                Box(contentAlignment = Alignment.Center) {
+                    Text("Preview", fontSize = 12.sp, fontWeight = FontWeight.Bold, color = bgColor)
+                }
             }
         }
     }
