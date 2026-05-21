@@ -26,10 +26,9 @@ import com.bloem.app.ui.components.*
 import com.bloem.app.ui.theme.*
 
 @Composable
-fun ViewSessionsScreen(onBack: () -> Unit) {
+fun ViewSessionsScreen(onHome: () -> Unit, onBook: () -> Unit) {
     var isSidebarVisible by remember { mutableStateOf(false) }
     var brightness by remember { mutableFloatStateOf(0.6f) }
-    var selectedMood by remember { mutableStateOf("Calm") }
 
     Row(modifier = Modifier.fillMaxSize().background(Soot)) {
         // Sidebar with toggle animation
@@ -39,10 +38,10 @@ fun ViewSessionsScreen(onBack: () -> Unit) {
             exit = shrinkHorizontally()
         ) {
             Sidebar(
-                onHomeClick = onBack,
+                onHomeClick = onHome,
                 currentRoute = "view_sessions",
                 onViewSessionsClick = {},
-                onBookClick = {}
+                onBookClick = onBook
             )
         }
 
@@ -111,16 +110,8 @@ fun ViewSessionsScreen(onBack: () -> Unit) {
                     }
                 }
 
-                // Restore Lighting Options (Preview)
                 item {
-                    Text("Lighting Options (Preview)", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Soot)
-                    Spacer(modifier = Modifier.height(16.dp))
-                    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-                        MoodCard("Calm", Icons.Default.WbSunny, selectedMood == "Calm") { selectedMood = "Calm" }
-                        MoodCard("Ocean", Icons.Default.Water, selectedMood == "Ocean") { selectedMood = "Ocean" }
-                        MoodCard("Rain", Icons.Default.Thunderstorm, selectedMood == "Rain") { selectedMood = "Rain" }
-                        MoodCard("Energetic", Icons.Default.Bolt, selectedMood == "Energetic") { selectedMood = "Energetic" }
-                    }
+                    Text("Lighting Options", fontWeight = FontWeight.Bold, fontSize = 22.sp, color = Soot)
                     
                     Spacer(modifier = Modifier.height(24.dp))
                     Text("Brightness", color = Soot, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)

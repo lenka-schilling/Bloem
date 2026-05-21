@@ -26,7 +26,11 @@ class MainActivity : ComponentActivity() {
                     }
                     composable("booking") {
                         BookingScreen(
-                            onBack = { navController.popBackStack() },
+                            onHome = { 
+                                navController.navigate("home") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
                             onViewSessions = { navController.navigate("view_sessions") }
                         )
                     }
@@ -34,7 +38,14 @@ class MainActivity : ComponentActivity() {
                         ControlSessionScreen(onBack = { navController.popBackStack() })
                     }
                     composable("view_sessions") {
-                        ViewSessionsScreen(onBack = { navController.popBackStack() })
+                        ViewSessionsScreen(
+                            onHome = { 
+                                navController.navigate("home") {
+                                    popUpTo("home") { inclusive = true }
+                                }
+                            },
+                            onBook = { navController.navigate("booking") }
+                        )
                     }
                 }
             }

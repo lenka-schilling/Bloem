@@ -27,14 +27,14 @@ import com.bloem.app.ui.theme.Plaster
 import com.bloem.app.ui.theme.Moss
 
 @Composable
-fun BookingScreen(onBack: () -> Unit, onViewSessions: () -> Unit) {
+fun BookingScreen(onHome: () -> Unit, onViewSessions: () -> Unit) {
     var isSidebarVisible by remember { mutableStateOf(false) }
     var selectedDuration by remember { mutableIntStateOf(15) }
     var selectedTime by remember { mutableStateOf("10:00 AM") }
 
     Row(modifier = Modifier.fillMaxSize().background(Soot)) {
         AnimatedVisibility(visible = isSidebarVisible, enter = expandHorizontally(), exit = shrinkHorizontally()) {
-            Sidebar(onHomeClick = onBack, currentRoute = "booking", onViewSessionsClick = onViewSessions, onBookClick = {})
+            Sidebar(onHomeClick = onHome, currentRoute = "booking", onViewSessionsClick = onViewSessions, onBookClick = {})
         }
 
         Column(
