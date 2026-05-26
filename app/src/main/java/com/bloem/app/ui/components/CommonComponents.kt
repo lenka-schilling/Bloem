@@ -2,6 +2,7 @@ package com.bloem.app.ui.components
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
@@ -85,13 +86,35 @@ fun MoodCard(label: String, icon: ImageVector, isSelected: Boolean, onClick: () 
 }
 
 @Composable
-fun ColorOption(color: Color, hasBorder: Boolean = false) {
+fun ColorOption(
+    color: Color,
+    hasBorder: Boolean = false,
+    isSelected: Boolean = false,
+    onClick: () -> Unit = {},
+) {
     Box(
         modifier = Modifier
             .size(40.dp)
             .clip(CircleShape)
-            .background(color)
-            .then(if (hasBorder) Modifier.background(Color.LightGray.copy(alpha = 0.5f)).padding(1.dp).clip(CircleShape).background(color) else Modifier)
+            .then(
+                if (isSelected) {
+                    Modifier.border(3.dp, Soot, CircleShape)
+                } else {
+                    Modifier
+                }
+            )
+            .clickable(onClick = onClick)
+            .then(
+                if (hasBorder) {
+                    Modifier
+                        .background(Color.LightGray.copy(alpha = 0.5f))
+                        .padding(1.dp)
+                        .clip(CircleShape)
+                        .background(color)
+                } else {
+                    Modifier.background(color)
+                }
+            )
     )
 }
 

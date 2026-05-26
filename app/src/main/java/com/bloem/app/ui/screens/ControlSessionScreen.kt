@@ -22,6 +22,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.bloem.app.led.LedSyncEffect
+import com.bloem.app.led.capsuleColorOptions
 import com.bloem.app.ui.components.*
 import com.bloem.app.ui.theme.*
 
@@ -30,8 +32,11 @@ fun ControlSessionScreen(onBack: () -> Unit) {
     var lightsOn by remember { mutableStateOf(true) }
     var soundOn by remember { mutableStateOf(true) }
     var brightness by remember { mutableFloatStateOf(0.6f) }
+    var selectedColor by remember { mutableStateOf(capsuleColorOptions[1].color) }
     var selectedMood by remember { mutableStateOf("Calm") }
     var selectedSoundType by remember { mutableStateOf("Sounds") }
+
+    LedSyncEffect(color = selectedColor, brightness = brightness, lightsOn = lightsOn)
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -87,13 +92,14 @@ fun ControlSessionScreen(onBack: () -> Unit) {
                         Text("Color", color = Soot, fontWeight = FontWeight.SemiBold, fontSize = 18.sp)
                         Spacer(modifier = Modifier.height(12.dp))
                         Row(horizontalArrangement = Arrangement.spacedBy(16.dp)) {
-                            ColorOption(Soot)
-                            ColorOption(Moss)
-                            ColorOption(Eucalyptus)
-                            ColorOption(Color.White, true)
-                            ColorOption(Mist)
-                            ColorOption(Color(0xFFB39DDB))
-                            ColorOption(Color(0xFFEF9A9A))
+                            capsuleColorOptions.forEach { option ->
+                                ColorOption(
+                                    color = option.color,
+                                    hasBorder = option.hasBorder,
+                                    isSelected = selectedColor == option.color,
+                                    onClick = { selectedColor = option.color },
+                                )
+                            }
                         }
                     }
                 }
