@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
-"""Send one RGB command through the PC proxy (same path as the emulator)."""
+"""Send RGB commands through the PC proxy (same path as the emulator)."""
 
 import socket
+import time
 
 PROXY_HOST = "127.0.0.1"
 PROXY_PORT = 8888
@@ -13,4 +14,14 @@ def send(command: str):
         print(f"Sent: {command.strip()!r}  Reply: {ack!r}")
 
 if __name__ == "__main__":
-    send("RGB:255,0,0\n")
+    # Slow sequence so you can see each color.
+    for cmd, label in [
+        ("RGB:255,0,0\n", "RED"),
+        ("RGB:0,255,0\n", "GREEN"),
+        ("RGB:0,0,255\n", "BLUE"),
+        ("RGB:255,255,255\n", "WHITE"),
+        ("RGB:0,0,0\n", "OFF"),
+    ]:
+        print(f"\n--- {label} ({cmd.strip()}) ---")
+        send(cmd)
+        time.sleep(1.5)

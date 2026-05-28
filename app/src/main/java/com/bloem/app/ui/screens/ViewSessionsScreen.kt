@@ -32,7 +32,7 @@ fun ViewSessionsScreen(onHome: () -> Unit, onBook: () -> Unit) {
     var isSidebarVisible by remember { mutableStateOf(false) }
     var lightsOn by remember { mutableStateOf(true) }
     var brightness by remember { mutableFloatStateOf(0.6f) }
-    var selectedColor by remember { mutableStateOf(capsuleColorOptions[1].color) }
+    var selectedColor by remember { mutableStateOf(capsuleColorOptions[1].color) } // default: Red
 
     LedSyncEffect(color = selectedColor, brightness = brightness, lightsOn = lightsOn)
 

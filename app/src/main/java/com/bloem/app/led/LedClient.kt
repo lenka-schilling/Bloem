@@ -66,10 +66,47 @@ object LedClient {
         val scale = brightness.coerceIn(0f, 1f)
         if (scale <= 0f) return "LED:0\n"
 
-        val r = (color.red * 255 * scale).roundToInt().coerceIn(0, 255)
-        val g = (color.green * 255 * scale).roundToInt().coerceIn(0, 255)
-        val b = (color.blue * 255 * scale).roundToInt().coerceIn(0, 255)
+        // Convert UI color → LED color with extra contrast.
+        // Many of the UI theme colors are intentionally muted/grey.
+        // On real RGB strips those can look very similar, especially with blue-heavy LEDs.
+        val (r0, g0, b0) = toRgb255(color)
+        val (rb, gb, bb) = boostSaturation(r0, g0, b0)
+
+        val r = (rb * scale * LedConfig.RED_GAIN).roundToInt().coerceIn(0, 255)
+        val g = (gb * scale * LedConfig.GREEN_GAIN).roundToInt().coerceIn(0, 255)
+        val b = (bb * scale * LedConfig.BLUE_GAIN).roundToInt().coerceIn(0, 255)
 
         return "RGB:$r,$g,$b\n"
+    }
+
+    private fun toRgb255(color: Color): Triple<Int, Int, Int> {
+        val r = (color.red * 255f).roundToInt().coerceIn(0, 255)
+        val g = (color.green * 255f).roundToInt().coerceIn(0, 255)
+        val b = (color.blue * 255f).roundToInt().coerceIn(0, 255)
+        return Triple(r, g, b)
+    }
+
+    /**
+     * Expand the channel range to make muted colors more distinct on LEDs.
+     * Preserves hue while increasing saturation:
+     * - subtract min channel (removes grey component)
+     * - scale so the max channel hits 255
+     */
+    private fun boostSaturation(r: Int, g: Int, b: Int): Triple<Float, Float, Float> {
+        val minC = minOf(r, g, b)
+        val maxC = maxOf(r, g, b)
+        val range = maxC - minC
+
+        // Very grey colors: keep them grey (but keep them visible).
+        if (range <= 10) {
+            val v = maxC.toFloat()
+            return Triple(v, v, v)
+        }
+
+        val rf = (r - minC).toFloat()
+        val gf = (g - minC).toFloat()
+        val bf = (b - minC).toFloat()
+        val scale = 255f / range.toFloat()
+        return Triple(rf * scale, gf * scale, bf * scale)
     }
 }

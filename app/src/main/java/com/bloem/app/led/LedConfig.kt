@@ -18,6 +18,14 @@ object LedConfig {
     /** PC proxy port — must match [tools/led_proxy.py]. */
     const val EMULATOR_PROXY_PORT = 8888
 
+    /**
+     * Optional channel gains (useful if your strip is blue-dominant).
+     * Start with these defaults; tweak if needed (e.g. BLUE_GAIN = 0.6f).
+     */
+    const val RED_GAIN = 1.0f
+    const val GREEN_GAIN = 1.0f
+    const val BLUE_GAIN = 1.0f
+
     fun host(forEmulator: Boolean): String =
         if (forEmulator) EMULATOR_HOST else ESP32_HOST
 

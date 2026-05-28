@@ -32,7 +32,7 @@ fun ControlSessionScreen(onBack: () -> Unit) {
     var lightsOn by remember { mutableStateOf(true) }
     var soundOn by remember { mutableStateOf(true) }
     var brightness by remember { mutableFloatStateOf(0.6f) }
-    var selectedColor by remember { mutableStateOf(capsuleColorOptions[1].color) }
+    var selectedColor by remember { mutableStateOf(capsuleColorOptions[1].color) } // default: Red
     var selectedMood by remember { mutableStateOf("Calm") }
     var selectedSoundType by remember { mutableStateOf("Sounds") }
 

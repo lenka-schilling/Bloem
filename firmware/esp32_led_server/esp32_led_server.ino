@@ -1,14 +1,13 @@
 /*
- * Bloem ESP32 LED server — same protocol as the EPS desktop client.
+ * Bloem ESP32 LED server — TCP protocol (same as your friend's C# SocketClient).
  *
  * TCP port 2000, newline-terminated text commands:
  *   LED:1        → white
  *   LED:0        → off
  *   RGB:r,g,b    → set colour (e.g. RGB:86,107,95 for Moss green)
  *
- * 1. Set WIFI_SSID / WIFI_PASSWORD below.
- * 2. Upload this entire folder in Arduino IDE.
- * 3. Serial Monitor (115200) prints the IP — use it in LedConfig.kt and tools/led_proxy.py
+ * This firmware drives a non-addressable RGB strip (3 PWM channels).
+ * If your strip is common-anode, set INVERT_OUTPUT to 1 in leds.h.
  */
 
 #include <WiFi.h>
@@ -26,9 +25,7 @@ void setup()
 {
   Serial.begin(115200);
 
-  pinMode(RED_PIN, OUTPUT);
-  pinMode(GREEN_PIN, OUTPUT);
-  pinMode(BLUE_PIN, OUTPUT);
+  ledsInit();
   leds(0, 0, 0);
 
   WiFi.mode(WIFI_STA);
